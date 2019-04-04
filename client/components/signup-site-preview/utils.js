@@ -11,7 +11,7 @@
 export function fvdToFontWeightAndStyle( fvd ) {
 	return {
 		weight: fvd[ 1 ] + '00',
-		style: fvd[ 0 ] === 'i' ? 'italic' : 'normal'
+		style: fvd[ 0 ] === 'i' ? 'italic' : 'normal',
 	};
 }
 
@@ -64,27 +64,24 @@ export function getIframeSource( content, font, isRtl, langSlug, themeSlug ) {
 		</head>
 		<body class="home page-template-default page logged-in">
 			<div id="page" class="site">
-				<header id="masthead" class="site-header">
-					<div class="site-branding-container">
-						<div class="site-branding">
-							<p class="site-title"><a href="#" rel="home">${ content.title }</a></p>
-							<p class="site-description"><a href="#" rel="home">${ content.tagline }</a></p>
-							<nav id="site-navigation" class="main-navigation" aria-label="Top Menu"></nav>
-						</div>
-					</div>
-				</header>
 				<div id="content" class="site-content">
 					<section id="primary" class="content-area">
 						<main id="main" class="site-main">
-							<article class="page type-page status-publish hentry entry">
-								<div class="entry-content">${ content.body }</div>
+							<article className="post-2 page type-page status-publish hentry entry">
+								<div className="entry-content">
+									<div class="site-builder__header">
+										<h1 class="site-builder__title">${ content.title }</h1>
+										<h2 class="site-builder__description">${ content.tagline }</h2>
+										${ content.body }
+									</div>
+								</div>
 							</article>
-						</main>
+						</div>
 					</section>
 				</div>
 			</div>
 		</body>
 	</html>`;
 
-	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) )
+	return URL.createObjectURL( new Blob( [ source ], { type: 'text/html' } ) );
 }
