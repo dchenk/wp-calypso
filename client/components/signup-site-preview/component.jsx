@@ -14,7 +14,7 @@ import { localize, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
-import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils'
+import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils';
 
 /**
  * Style dependencies
@@ -131,9 +131,9 @@ export class SignupSitePreview extends Component {
 		if ( ! this.iframe.current ) {
 			return;
 		}
-		this.iframe.current.contentWindow.document.querySelector( '#page' ).onclick = () =>
+		this.iframe.current.contentWindow.document.querySelector( '.home' ).onclick = () =>
 			this.props.onPreviewClick( this.props.defaultViewportDevice );
-	}
+	};
 
 	setLoaded = () => {
 		this.setOnPreviewClick();
@@ -171,5 +171,3 @@ export default connect(
 	} ),
 	null
 )( localize( SignupSitePreview ) );
-
-

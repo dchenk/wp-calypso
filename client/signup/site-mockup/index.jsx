@@ -13,12 +13,10 @@ import { translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getSiteType } from 'state/signup/steps/site-type/selectors';
-import {
-	getSiteVerticalPreview,
-} from 'state/signup/steps/site-vertical/selectors';
+import { getSiteVerticalPreview } from 'state/signup/steps/site-vertical/selectors';
 import { getSiteInformation } from 'state/signup/steps/site-information/selectors';
 import { getSiteStyle } from 'state/signup/steps/site-style/selectors';
-import SignupSitePreview from 'components/signup-site-preview'
+import SignupSitePreview from 'components/signup-site-preview';
 import Gridicon from 'gridicons';
 import { getSiteStyleOptions } from 'lib/signup/site-styles';
 import { recordTracksEvent } from 'state/analytics/actions';
@@ -40,7 +38,6 @@ function SiteMockupHelpTip() {
 		</div>
 	);
 }
-
 
 class SiteMockups extends Component {
 	static propTypes = {
@@ -113,10 +110,19 @@ class SiteMockups extends Component {
 		return parts.slice( 0, 2 ).join( ', ' );
 	}
 
-	handleClick = size => this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
+	handleClick = size =>
+		this.props.handleClick( this.props.verticalSlug, this.props.siteStyle, size );
 
 	render() {
-		const { font, shouldShowHelpTip, siteStyle, siteType, title, themeSlug, verticalPreviewContent } = this.props;
+		const {
+			font,
+			shouldShowHelpTip,
+			siteStyle,
+			siteType,
+			title,
+			themeSlug,
+			verticalPreviewContent,
+		} = this.props;
 		const siteMockupClasses = classNames( 'site-mockup__wrap', {
 			'is-empty': isEmpty( verticalPreviewContent ),
 		} );
@@ -136,45 +142,55 @@ class SiteMockups extends Component {
 			<div className={ siteMockupClasses }>
 				{ shouldShowHelpTip && <SiteMockupHelpTip /> }
 				<div className="site-mockup__devices">
-					<SignupSitePreview defaultViewportDevice="desktop" { ...otherProps } />
-					<SignupSitePreview defaultViewportDevice="phone" { ...otherProps }  onPreviewClick={ this.handleClick } />
+					<SignupSitePreview
+						defaultViewportDevice="desktop"
+						{ ...otherProps }
+						onPreviewClick={ this.handleClick }
+					/>
+					<SignupSitePreview
+						defaultViewportDevice="phone"
+						{ ...otherProps }
+						onPreviewClick={ this.handleClick }
+					/>
 				</div>
 			</div>
 		);
 	}
 }
 
-export default connect( ( state, ownProps ) => {
-	const siteInformation = getSiteInformation( state );
-	const siteStyle = getSiteStyle( state );
-	const siteType = getSiteType( state );
-	const styleOptions = getSiteStyleOptions( siteType );
-	const style = find( styleOptions, { id: siteStyle || 'default' } );
-	return {
-		title: siteInformation.title || translate( 'Your New Website' ),
-		address: siteInformation.address,
-		phone: siteInformation.phone,
-		siteStyle,
-		siteType,
-		verticalPreviewContent: getSiteVerticalPreview( state ),
-		verticalSlug: getSiteVerticalSlug( state ),
-		shouldShowHelpTip: 'site-topic-with-preview' === ownProps.stepName ||
-			'site-information-title-with-preview' === ownProps.stepName,
-		themeSlug: style.theme,
-		font: {
-			...style.font,
-			id: style.font.name.trim().replace( / /g, '+' ),
-		},
-	};
-},
-dispatch => ( {
-	handleClick: ( verticalSlug, siteStyle, size ) =>
-		dispatch(
-			recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
-				size,
-				vertical_slug: verticalSlug,
-				site_style: siteStyle || 'default',
-			} )
-		),
-} )
+export default connect(
+	( state, ownProps ) => {
+		const siteInformation = getSiteInformation( state );
+		const siteStyle = getSiteStyle( state );
+		const siteType = getSiteType( state );
+		const styleOptions = getSiteStyleOptions( siteType );
+		const style = find( styleOptions, { id: siteStyle || 'default' } );
+		return {
+			title: siteInformation.title || translate( 'Your New Website' ),
+			address: siteInformation.address,
+			phone: siteInformation.phone,
+			siteStyle,
+			siteType,
+			verticalPreviewContent: getSiteVerticalPreview( state ),
+			verticalSlug: getSiteVerticalSlug( state ),
+			shouldShowHelpTip:
+				'site-topic-with-preview' === ownProps.stepName ||
+				'site-information-title-with-preview' === ownProps.stepName,
+			themeSlug: style.theme,
+			font: {
+				...style.font,
+				id: style.font.name.trim().replace( / /g, '+' ),
+			},
+		};
+	},
+	dispatch => ( {
+		handleClick: ( verticalSlug, siteStyle, size ) =>
+			dispatch(
+				recordTracksEvent( 'calypso_signup_site_preview_mockup_clicked', {
+					size,
+					vertical_slug: verticalSlug,
+					site_style: siteStyle || 'default',
+				} )
+			),
+	} )
 )( SiteMockups );
