@@ -14,7 +14,7 @@ import { localize, translate } from 'i18n-calypso';
  * Internal dependencies
  */
 import { getLocaleSlug } from 'lib/i18n-utils';
-import { getIframeSource } from 'components/signup-site-preview/utils'
+import { getIframeSource, getIframePageContent } from 'components/signup-site-preview/utils'
 
 /**
  * Style dependencies
@@ -59,6 +59,7 @@ export class SignupSitePreview extends Component {
 		siteType: PropTypes.string,
 		// Iframe body content
 		content: PropTypes.object,
+		onPreviewClick: PropTypes.func,
 	};
 
 	static defaultProps = {
@@ -69,6 +70,7 @@ export class SignupSitePreview extends Component {
 		siteType: 'business',
 		themeSlug: 'pub/professional-business',
 		content: {},
+		onPreviewClick: () => {},
 	};
 
 	constructor( props ) {
@@ -81,11 +83,11 @@ export class SignupSitePreview extends Component {
 
 	shouldComponentUpdate( nextProps ) {
 		if ( this.props.content.title !== nextProps.content.title ) {
-			this.setIframeContent( '.site-title > a', nextProps.content.title );
+			this.setIframeContent( '.site-builder__title', nextProps.content.title );
 		}
 
 		if ( this.props.content.tagline !== nextProps.content.tagline ) {
-			this.setIframeContent( '.site-description > a', nextProps.content.tagline );
+			this.setIframeContent( '.site-builder__description', nextProps.content.tagline );
 		}
 
 		if ( this.props.themeSlug !== nextProps.themeSlug ) {
@@ -97,10 +99,21 @@ export class SignupSitePreview extends Component {
 		}
 
 		if ( this.props.content.body !== nextProps.content.body ) {
-			this.setIframeContent( '.entry-content', nextProps.content.body );
+			this.setIframePageContent( nextProps.content );
 		}
 
 		return false;
+	}
+
+	setIframePageContent( content ) {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+		const element = this.iframe.current.contentWindow.document.querySelector( '.entry' );
+
+		if ( element ) {
+			element.innerHTML = getIframePageContent( content );
+		}
 	}
 
 	setIframeContent( selector, content ) {
@@ -113,6 +126,18 @@ export class SignupSitePreview extends Component {
 			element.innerHTML = content;
 		}
 	}
+
+	setOnPreviewClick = () => {
+		if ( ! this.iframe.current ) {
+			return;
+		}
+		this.iframe.current.contentWindow.document.querySelector( '#page' ).onclick = () =>
+			this.props.onPreviewClick( this.props.defaultViewportDevice );
+	}
+
+	setLoaded = () => {
+		this.setOnPreviewClick();
+	};
 
 	render() {
 		const { font, isDesktop, isPhone, content, isRtl, langSlug, themeSlug } = this.props;
