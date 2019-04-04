@@ -14,6 +14,7 @@ import { localize } from 'i18n-calypso';
  */
 import Checklist from 'components/checklist';
 import getSiteChecklist from 'state/selectors/get-site-checklist';
+import JetpackChecklistHeader from './header';
 import QuerySiteChecklist from 'components/data/query-site-checklist';
 import Task from 'components/checklist/task';
 import { getSelectedSiteId } from 'state/ui/selectors';
@@ -21,6 +22,11 @@ import { getSiteSlug } from 'state/sites/selectors';
 import { isDesktop } from 'lib/viewport';
 import { recordTracksEvent } from 'state/analytics/actions';
 import { requestGuidedTour } from 'state/ui/guided-tours/actions';
+
+/**
+ * Style dependencies
+ */
+import './style.scss';
 
 class JetpackChecklist extends PureComponent {
 	isComplete( taskId ) {
@@ -53,6 +59,9 @@ class JetpackChecklist extends PureComponent {
 		return (
 			<Fragment>
 				{ siteId && <QuerySiteChecklist siteId={ siteId } /> }
+
+				<JetpackChecklistHeader />
+
 				<Checklist
 					isPlaceholder={ ! taskStatuses }
 					progressText={ translate( 'Your Jetpack setup progress' ) }
